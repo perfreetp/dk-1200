@@ -4,10 +4,27 @@ import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useAppStore } from '@/store/useAppStore';
 import { notificationLabels } from '@/types/user';
+import { FilterType } from '@/types/photo';
 import styles from './index.module.scss';
 
+const getFilterStyle = (filter: FilterType | undefined) => {
+  if (!filter || filter === 'original') return {};
+  switch (filter) {
+    case 'warm':
+      return { filter: 'sepia(20%) saturate(120%) hue-rotate(10deg)' };
+    case 'cool':
+      return { filter: 'sepia(10%) saturate(90%) hue-rotate(180deg)' };
+    case 'vintage':
+      return { filter: 'sepia(50%) contrast(110%) brightness(90%)' };
+    case 'bright':
+      return { filter: 'brightness(1.15) contrast(105%)' };
+    default:
+      return {};
+  }
+};
+
 const MinePage: React.FC = () => {
-  const { currentUser, photos, pets, albums } = useAppStore();
+  const { currentUser, getVisiblePhotos, pets, albums } = useAppStore();
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showPostcardModal, setShowPostcardModal] = useState(false);
@@ -15,7 +32,9 @@ const MinePage: React.FC = () => {
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
   const [generatedPostcard, setGeneratedPostcard] = useState<string>('');
 
-  const favoriteCount = photos.filter(p => p.isFavorite).length;
+  const visiblePhotos = getVisiblePhotos();
+  
+  const favoriteCount = visiblePhotos.filter(p => p.isFavorite).length;
   const unreadCount = currentUser.notifications.filter(n => !n.isRead).length;
 
   const menuItems = [
@@ -27,7 +46,7 @@ const MinePage: React.FC = () => {
   ];
 
   const handleFavorites = () => {
-    const favorites = photos.filter(p => p.isFavorite);
+    const favorites = visiblePhotos.filter(p => p.isFavorite);
     if (favorites.length === 0) {
       Taro.showToast({ title: '暂无收藏', icon: 'none' });
       return;
@@ -59,7 +78,7 @@ const MinePage: React.FC = () => {
       return;
     }
     const pet = pets.find(p => p.id === selectedPetId);
-    const petPhotos = photos.filter(p => p.petId === selectedPetId);
+    const petPhotos = visiblePhotos.filter(p => p.petId === selectedPetId);
     const recentPhotos = petPhotos.slice(0, 4).map(p => p.imageUrl);
     
     setGeneratedPostcard(`生成的明信片: ${pet?.name}的成长记录`);
@@ -90,7 +109,7 @@ const MinePage: React.FC = () => {
             <Text className={styles.statLabel}>宠物</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statNum}>{photos.length}</Text>
+            <Text className={styles.statNum}>{visiblePhotos.length}</Text>
             <Text className={styles.statLabel}>照片</Text>
           </View>
           <View className={styles.statItem}>
@@ -195,13 +214,13 @@ const MinePage: React.FC = () => {
             <Text className={styles.modalSubtitle}>选择要分享的照片（最多9张）</Text>
             <ScrollView scrollY className={styles.photoSelectList}>
               <View className={styles.photoSelectGrid}>
-                {photos.slice(0, 18).map(photo => (
+                {visiblePhotos.slice(0, 18).map(photo => (
                   <View
                     key={photo.id}
                     className={classnames(styles.photoSelectItem, selectedPhotos.includes(photo.imageUrl) && styles.photoSelected)}
                     onClick={() => handlePhotoSelect(photo.imageUrl)}
                   >
-                    <Image src={photo.imageUrl} mode="aspectFill" className={styles.photoSelectImage} />
+                    <Image src={photo.imageUrl} mode="aspectFill" className={styles.photoSelectImage} style={getFilterStyle(photo.filter)} />
                     {selectedPhotos.includes(photo.imageUrl) && (
                       <View className={styles.photoSelectCheck}>✓</View>
                     )}
@@ -240,8 +259,8 @@ const MinePage: React.FC = () => {
                 <View className={styles.postcardTemplate}>
                   <Text className={styles.postcardTitle}>{pets.find(p => p.id === selectedPetId)?.name}的成长记录</Text>
                   <View className={styles.postcardPhotos}>
-                    {photos.filter(p => p.petId === selectedPetId).slice(0, 4).map((photo, index) => (
-                      <Image key={index} src={photo.imageUrl} mode="aspectFill" className={styles.postcardImage} />
+                    {visiblePhotos.filter(p => p.petId === selectedPetId).slice(0, 4).map((photo, index) => (
+                      <Image key={index} src={photo.imageUrl} mode="aspectFill" className={styles.postcardImage} style={getFilterStyle(photo.filter)} />
                     ))}
                   </View>
                   <Text className={styles.postcardDate}>{new Date().toISOString().split('T')[0]}</Text>

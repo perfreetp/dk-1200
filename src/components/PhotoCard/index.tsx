@@ -1,13 +1,29 @@
 import React from 'react';
 import { View, Text, Image } from '@tarojs/components';
 import classnames from 'classnames';
-import { Photo, moodLabels, moodColors } from '@/types/photo';
+import { Photo, moodLabels, moodColors, FilterType } from '@/types/photo';
 import styles from './index.module.scss';
 
 interface PhotoCardProps {
   photo: Photo;
   onClick?: () => void;
 }
+
+const getFilterStyle = (filter: FilterType | undefined) => {
+  if (!filter || filter === 'original') return {};
+  switch (filter) {
+    case 'warm':
+      return { filter: 'sepia(20%) saturate(120%) hue-rotate(10deg)' };
+    case 'cool':
+      return { filter: 'sepia(10%) saturate(90%) hue-rotate(180deg)' };
+    case 'vintage':
+      return { filter: 'sepia(50%) contrast(110%) brightness(90%)' };
+    case 'bright':
+      return { filter: 'brightness(1.15) contrast(105%)' };
+    default:
+      return {};
+  }
+};
 
 const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onClick }) => {
   return (
@@ -17,6 +33,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onClick }) => {
         mode="aspectFill"
         className={styles.image}
         lazyLoad
+        style={getFilterStyle(photo.filter)}
       />
       <View className={styles.info}>
         <View className={styles.petInfo}>
@@ -55,7 +72,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onClick }) => {
         </View>
         <View className={styles.statItem}>
           <Text className={classnames(styles.statIcon, photo.isFavorite && styles.favorited)}>★</Text>
-          <Text className={styles.statNum}>{photo.comments}</Text>
+          <Text className={styles.statNum}>{photo.commentsCount}</Text>
         </View>
       </View>
     </View>

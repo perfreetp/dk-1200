@@ -3,10 +3,27 @@ import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/store/useAppStore';
 import { albumTypeLabels, albumTypeColors } from '@/types/album';
+import { FilterType } from '@/types/photo';
 import styles from './index.module.scss';
 
+const getFilterStyle = (filter: FilterType | undefined) => {
+  if (!filter || filter === 'original') return {};
+  switch (filter) {
+    case 'warm':
+      return { filter: 'sepia(20%) saturate(120%) hue-rotate(10deg)' };
+    case 'cool':
+      return { filter: 'sepia(10%) saturate(90%) hue-rotate(180deg)' };
+    case 'vintage':
+      return { filter: 'sepia(50%) contrast(110%) brightness(90%)' };
+    case 'bright':
+      return { filter: 'brightness(1.15) contrast(105%)' };
+    default:
+      return {};
+  }
+};
+
 const AlbumDetailPage: React.FC = () => {
-  const { albums, getAlbumPhotos, photos, addPhotosToAlbum } = useAppStore();
+  const { albums, getAlbumPhotos, getVisiblePhotos, addPhotosToAlbum } = useAppStore();
   const [album, setAlbum] = useState<typeof albums[0] | null>(null);
   const [albumId, setAlbumId] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -30,12 +47,12 @@ const AlbumDetailPage: React.FC = () => {
 
   const availablePhotos = useMemo(() => {
     if (!album) return [];
-    return photos.filter(p => 
+    const visiblePhotos = getVisiblePhotos();
+    return visiblePhotos.filter(p => 
       p.petId === album.petId && 
-      !album.photoIds.includes(p.id) &&
-      p.visibility !== 'private'
+      !album.photoIds.includes(p.id)
     );
-  }, [photos, album]);
+  }, [getVisiblePhotos, album]);
 
   const handlePhotoSelect = (photoId: string) => {
     if (selectedPhotoIds.includes(photoId)) {
@@ -117,7 +134,7 @@ const AlbumDetailPage: React.FC = () => {
                   className={styles.photoItem}
                   onClick={() => Taro.navigateTo({ url: `/pages/detail/index?id=${photo.id}` })}
                 >
-                  <Image src={photo.imageUrl} mode="aspectFill" className={styles.photoImage} />
+                  <Image src={photo.imageUrl} mode="aspectFill" className={styles.photoImage} style={getFilterStyle(photo.filter)} />
                 </View>
               ))}
             </View>
@@ -145,7 +162,7 @@ const AlbumDetailPage: React.FC = () => {
                     className={styles.photoSelectItem}
                     onClick={() => handlePhotoSelect(photo.id)}
                   >
-                    <Image src={photo.imageUrl} mode="aspectFill" className={styles.photoSelectImage} />
+                    <Image src={photo.imageUrl} mode="aspectFill" className={styles.photoSelectImage} style={getFilterStyle(photo.filter)} />
                     {selectedPhotoIds.includes(photo.id) && (
                       <View className={styles.photoSelectCheck}>✓</View>
                     )}
