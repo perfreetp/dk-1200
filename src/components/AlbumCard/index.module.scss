@@ -1,0 +1,79 @@
+@use '@/styles/variables.scss' as *;
+
+.albumCard {
+  position: relative;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+  
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.cover {
+  width: 100%;
+  height: 280rpx;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+}
+
+.typeTag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-xs;
+  margin-bottom: $spacing-xs;
+}
+
+.typeText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+  margin-bottom: $spacing-xs;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.petName {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.photoCount {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.privateBadge {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.privateIcon {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+}

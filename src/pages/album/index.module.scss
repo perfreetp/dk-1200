@@ -1,0 +1,69 @@
+@use '@/styles/variables.scss' as *;
+
+.albumPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-md $page-padding;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  background: $color-primary;
+  border-radius: $radius-round;
+  
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.createIcon {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  margin-right: $spacing-xs;
+}
+
+.createText {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+}
+
+.albumGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.albumItem {
+  width: calc((100% - 24rpx) / 2);
+}
+
+.empty {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xl * 2;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}

@@ -1,0 +1,122 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  position: relative;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.info {
+  padding: $spacing-sm $spacing-md;
+}
+
+.petInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.petAvatar {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-xs;
+}
+
+.petName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.date {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-right: $spacing-xs;
+}
+
+.location {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.moodTag {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.moodDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-xs;
+}
+
+.moodText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+}
+
+.tag {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.stats {
+  position: absolute;
+  bottom: $spacing-sm;
+  right: $spacing-sm;
+  display: flex;
+  gap: $spacing-sm;
+  background: rgba(255, 255, 255, 0.9);
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-md;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.statIcon {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.liked {
+  color: $color-like;
+}
+
+.favorited {
+  color: $color-favorite;
+}
+
+.statNum {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}

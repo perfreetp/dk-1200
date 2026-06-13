@@ -1,0 +1,58 @@
+@use '@/styles/variables.scss' as *;
+
+.petPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-md $page-padding;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.addBtn {
+  width: 64rpx;
+  height: 64rpx;
+  background: $color-primary;
+  border-radius: $radius-round;
+  @include flex-center;
+  
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.addIcon {
+  font-size: 32rpx;
+  color: $color-text-white;
+}
+
+.petList {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xl * 2;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}

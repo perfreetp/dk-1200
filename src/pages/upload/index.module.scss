@@ -1,0 +1,278 @@
+@use '@/styles/variables.scss' as *;
+
+.uploadPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.section {
+  background: $color-bg-card;
+  margin-bottom: $spacing-md;
+  padding: $spacing-md $page-padding;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.photoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.photoItem {
+  width: calc((100% - 32rpx) / 3);
+  height: 200rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  position: relative;
+}
+
+.photoImage {
+  width: 100%;
+  height: 100%;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: $radius-round;
+  @include flex-center;
+}
+
+.removeIcon {
+  font-size: 24rpx;
+  color: $color-text-white;
+}
+
+.addPhoto {
+  width: calc((100% - 32rpx) / 3);
+  height: 200rpx;
+  border-radius: $radius-md;
+  background: $color-bg-hover;
+  @include flex-center;
+  flex-direction: column;
+  border: 2rpx dashed $color-border;
+}
+
+.addIcon {
+  font-size: 48rpx;
+  color: $color-text-tertiary;
+}
+
+.addText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: $spacing-xs;
+}
+
+.filterList {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filterPreview {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  border: 4rpx solid transparent;
+  transition: all $transition-base;
+}
+
+.filterActive {
+  border-color: $color-primary;
+}
+
+.filterName {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  margin-top: $spacing-xs;
+}
+
+.formItem {
+  margin-bottom: $spacing-lg;
+}
+
+.formLabel {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.petSelector {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.petOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  background: $color-bg-hover;
+  transition: all $transition-base;
+  
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.petActive {
+  background: rgba($color-primary, 0.15);
+  border: 2rpx solid $color-primary;
+}
+
+.petAvatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-round;
+  margin-bottom: $spacing-xs;
+}
+
+.petName {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.moodSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.moodOption {
+  display: flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-round;
+  background: $color-bg-hover;
+  transition: all $transition-base;
+}
+
+.moodActive {
+  background: $color-primary;
+  
+  .moodText {
+    color: $color-text-white;
+  }
+}
+
+.moodDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-xs;
+}
+
+.moodText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.tagSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.tagOption {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-round;
+  background: $color-bg-hover;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+}
+
+.tagActive {
+  background: $color-secondary;
+  color: $color-text-white;
+}
+
+.input {
+  width: 100%;
+  height: 80rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  border: none;
+}
+
+.visibilitySelector {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.visibilityOption {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  background: $color-bg-hover;
+  transition: all $transition-base;
+}
+
+.visibilityActive {
+  background: rgba($color-primary, 0.15);
+  border: 2rpx solid $color-primary;
+}
+
+.visibilityIcon {
+  font-size: 40rpx;
+  margin-bottom: $spacing-xs;
+}
+
+.visibilityText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: $shadow-float;
+  display: flex;
+  gap: $spacing-md;
+}
+
+.uploadButton {
+  flex: 1;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-button;
+  @include flex-center;
+  font-size: $font-size-lg;
+  color: $color-text-white;
+  font-weight: $font-weight-semibold;
+  
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

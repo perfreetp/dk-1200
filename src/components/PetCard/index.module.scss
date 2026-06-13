@@ -1,0 +1,93 @@
+@use '@/styles/variables.scss' as *;
+
+.petCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+  
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-md;
+  border: 4rpx solid $color-primary-light;
+}
+
+.info {
+  flex: 1;
+}
+
+.name {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.breed {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-xs;
+}
+
+.tags {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.tag {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  padding: $spacing-md 0;
+  background: $color-bg-warm;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statNum {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  @include text-ellipsis-multi(2);
+}
