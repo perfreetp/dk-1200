@@ -10,30 +10,30 @@ import styles from './index.module.scss';
 
 const HomePage: React.FC = () => {
   const {
-    photos,
+    getVisiblePhotos,
     pets,
     selectedPetId,
     selectedMood,
     selectedTag,
     setSelectedPetId,
     setSelectedMood,
-    setSelectedTag,
-    toggleLike,
-    toggleFavorite
+    setSelectedTag
   } = useAppStore();
 
   const [searchText, setSearchText] = useState('');
 
+  const visiblePhotos = useMemo(() => getVisiblePhotos(), [getVisiblePhotos]);
+
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
-    photos.forEach(photo => {
+    visiblePhotos.forEach(photo => {
       photo.tags.forEach(tag => tagSet.add(tag));
     });
     return Array.from(tagSet);
-  }, [photos]);
+  }, [visiblePhotos]);
 
   const filteredPhotos = useMemo(() => {
-    let result = photos;
+    let result = visiblePhotos;
     
     if (selectedPetId) {
       result = result.filter(p => p.petId === selectedPetId);
@@ -53,7 +53,7 @@ const HomePage: React.FC = () => {
     }
     
     return result;
-  }, [photos, selectedPetId, selectedMood, selectedTag, searchText]);
+  }, [visiblePhotos, selectedPetId, selectedMood, selectedTag, searchText]);
 
   const leftColumn = filteredPhotos.filter((_, index) => index % 2 === 0);
   const rightColumn = filteredPhotos.filter((_, index) => index % 2 === 1);

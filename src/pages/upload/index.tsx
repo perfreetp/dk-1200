@@ -34,7 +34,6 @@ const UploadPage: React.FC = () => {
   const [visibility, setVisibility] = useState<VisibilityType>('public');
   const [showCropModal, setShowCropModal] = useState(false);
   const [currentCropIndex, setCurrentCropIndex] = useState(0);
-  const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 300, height: 300 });
 
   const moods: MoodType[] = ['happy', 'sleepy', 'playful', 'curious', 'hungry', 'cute'];
 
@@ -125,7 +124,8 @@ const UploadPage: React.FC = () => {
         likes: 0,
         isLiked: false,
         isFavorite: false,
-        comments: 0,
+        comments: [],
+        commentsCount: 0,
         visibility,
         createdAt: new Date().toISOString()
       };

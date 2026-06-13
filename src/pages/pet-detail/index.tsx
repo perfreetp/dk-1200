@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/store/useAppStore';
@@ -7,35 +7,46 @@ import { moodLabels, moodColors } from '@/types/photo';
 import styles from './index.module.scss';
 
 const PetDetailPage: React.FC = () => {
-  const { pets, photos, albums } = useAppStore();
+  const { pets, getPetPhotos, albums } = useAppStore();
   const [pet, setPet] = useState<typeof pets[0] | null>(null);
-  const [petPhotos, setPetPhotos] = useState<typeof photos>([]);
-  const [petAlbums, setPetAlbums] = useState<typeof albums>([]);
+  const [petId, setPetId] = useState('');
   const [activeTab, setActiveTab] = useState<'photos' | 'timeline'>('photos');
 
   useEffect(() => {
     const pages = Taro.getCurrentPages();
     const currentPage = pages[pages.length - 1] as { options?: { id?: string } };
-    const petId = currentPage.options?.id || '';
-    const foundPet = pets.find(p => p.id === petId);
+    const id = currentPage.options?.id || '';
+    setPetId(id);
+    const foundPet = pets.find(p => p.id === id);
     if (foundPet) {
       setPet(foundPet);
-      setPetPhotos(photos.filter(p => p.petId === petId));
-      setPetAlbums(albums.filter(a => a.petId === petId));
     }
-  }, [pets, photos, albums]);
+  }, [pets]);
 
-  const groupedPhotos = petPhotos.reduce((acc, photo) => {
-    const date = photo.date;
-    if (!acc[date]) acc[date] = [];
-    acc[date].push(photo);
-    return acc;
-  }, {} as Record<string, typeof photos>);
+  const petPhotos = useMemo(() => {
+    if (!petId) return [];
+    return getPetPhotos(petId);
+  }, [petId, getPetPhotos]);
 
-  const timelineData = Object.entries(groupedPhotos).map(([date, photos]) => ({
-    date,
-    photos
-  })).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const petAlbums = useMemo(() => {
+    return albums.filter(a => a.petId === petId);
+  }, [albums, petId]);
+
+  const groupedPhotos = useMemo(() => {
+    return petPhotos.reduce((acc, photo) => {
+      const date = photo.date;
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(photo);
+      return acc;
+    }, {} as Record<string, typeof petPhotos>);
+  }, [petPhotos]);
+
+  const timelineData = useMemo(() => {
+    return Object.entries(groupedPhotos).map(([date, photos]) => ({
+      date,
+      photos
+    })).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [groupedPhotos]);
 
   if (!pet) {
     return (
@@ -58,11 +69,11 @@ const PetDetailPage: React.FC = () => {
 
         <View className={styles.statsRow}>
           <View className={styles.statItem}>
-            <Text className={styles.statNum}>{pet.photoCount}</Text>
+            <Text className={styles.statNum}>{petPhotos.length}</Text>
             <Text className={styles.statLabel}>照片</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statNum}>{pet.albums}</Text>
+            <Text className={styles.statNum}>{petAlbums.length}</Text>
             <Text className={styles.statLabel}>相册</Text>
           </View>
           <View className={styles.statItem}>
@@ -129,7 +140,7 @@ const PetDetailPage: React.FC = () => {
               </View>
             ) : (
               <View className={styles.emptyPhotos}>
-                <Text className={styles.emptyIcon}>�</Text>
+                <Text className={styles.emptyIcon}>📷</Text>
                 <Text className={styles.emptyText}>暂无照片</Text>
               </View>
             )}
@@ -180,7 +191,7 @@ const PetDetailPage: React.FC = () => {
                 >
                   <Image src={album.cover} mode="aspectFill" className={styles.albumCover} />
                   <Text className={styles.albumTitle}>{album.title}</Text>
-                  <Text className={styles.albumCount}>{album.photoCount}张</Text>
+                  <Text className={styles.albumCount}>{album.photoIds.length}张</Text>
                 </View>
               ))}
             </View>

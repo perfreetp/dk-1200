@@ -3,22 +3,12 @@ import { View, Text, Image, ScrollView, Input, Button } from '@tarojs/components
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useAppStore } from '@/store/useAppStore';
-import { moodLabels, moodColors, filterLabels } from '@/types/photo';
+import { moodLabels, moodColors, filterLabels, FilterType } from '@/types/photo';
 import styles from './index.module.scss';
 
-interface Comment {
-  id: string;
-  userId: string;
-  userName: string;
-  userAvatar: string;
-  content: string;
-  createdAt: string;
-}
-
 const DetailPage: React.FC = () => {
-  const { photos, toggleLike, toggleFavorite } = useAppStore();
+  const { photos, toggleLike, toggleFavorite, addComment } = useAppStore();
   const [photo, setPhoto] = useState<typeof photos[0] | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [showComments, setShowComments] = useState(false);
 
@@ -29,41 +19,41 @@ const DetailPage: React.FC = () => {
     const foundPhoto = photos.find(p => p.id === photoId);
     if (foundPhoto) {
       setPhoto(foundPhoto);
-      setComments([
-        { id: 'c1', userId: 'f1', userName: '妈妈', userAvatar: 'https://picsum.photos/id/91/200/200', content: '小橘真可爱！', createdAt: '2024-01-15 11:30' },
-        { id: 'c2', userId: 'f2', userName: '爸爸', userAvatar: 'https://picsum.photos/id/177/200/200', content: '好萌啊', createdAt: '2024-01-15 12:00' }
-      ]);
     }
   }, [photos]);
 
   const handleLike = () => {
     if (photo) {
       toggleLike(photo.id);
-      setPhoto(prev => prev ? { ...prev, isLiked: !prev.isLiked, likes: prev.isLiked ? prev.likes - 1 : prev.likes + 1 } : null);
     }
   };
 
   const handleFavorite = () => {
     if (photo) {
       toggleFavorite(photo.id);
-      setPhoto(prev => prev ? { ...prev, isFavorite: !prev.isFavorite } : null);
     }
   };
 
   const handleCommentSubmit = () => {
-    if (!newComment.trim()) return;
-    const comment: Comment = {
-      id: `c${Date.now()}`,
-      userId: 'u1',
-      userName: '我',
-      userAvatar: 'https://picsum.photos/id/64/200/200',
-      content: newComment,
-      createdAt: new Date().toLocaleString()
-    };
-    setComments([comment, ...comments]);
+    if (!newComment.trim() || !photo) return;
+    addComment(photo.id, newComment);
     setNewComment('');
-    if (photo) {
-      setPhoto(prev => prev ? { ...prev, comments: prev.comments + 1 } : null);
+    Taro.showToast({ title: '评论成功', icon: 'success' });
+  };
+
+  const getFilterStyle = (filter: FilterType | undefined) => {
+    if (!filter || filter === 'original') return {};
+    switch (filter) {
+      case 'warm':
+        return { filter: 'sepia(20%) saturate(120%) hue-rotate(10deg)' };
+      case 'cool':
+        return { filter: 'sepia(10%) saturate(90%) hue-rotate(180deg)' };
+      case 'vintage':
+        return { filter: 'sepia(50%) contrast(110%) brightness(90%)' };
+      case 'bright':
+        return { filter: 'brightness(1.15) contrast(105%)' };
+      default:
+        return {};
     }
   };
 
@@ -75,10 +65,6 @@ const DetailPage: React.FC = () => {
     );
   }
 
-  const filterStyle = photo.filter && photo.filter !== 'original' 
-    ? { filter: photo.filter === 'warm' ? 'sepia(20%) saturate(120%)' : photo.filter === 'cool' ? 'cool' : photo.filter === 'vintage' ? 'sepia(50%)' : 'brightness(1.1)' }
-    : {};
-
   return (
     <View className={styles.detailPage}>
       <ScrollView scrollY className={styles.scrollView}>
@@ -87,9 +73,9 @@ const DetailPage: React.FC = () => {
             src={photo.imageUrl}
             mode="aspectFit"
             className={styles.photoImage}
-            style={filterStyle}
+            style={getFilterStyle(photo.filter)}
           />
-          {photo.filter && (
+          {photo.filter && photo.filter !== 'original' && (
             <View className={styles.filterTag}>
               <Text>{filterLabels[photo.filter]}</Text>
             </View>
@@ -110,7 +96,7 @@ const DetailPage: React.FC = () => {
 
           <View className={styles.meta}>
             <Text className={styles.date}>{photo.date}</Text>
-            {photo.location && <Text className={styles.location}>� {photo.location}</Text>}
+            {photo.location && <Text className={styles.location}>📍 {photo.location}</Text>}
           </View>
 
           {photo.description && (
@@ -139,7 +125,7 @@ const DetailPage: React.FC = () => {
           </View>
           <View className={styles.actionBtn} onClick={() => setShowComments(!showComments)}>
             <Text className={styles.actionIcon}>💬</Text>
-            <Text className={styles.actionText}>{photo.comments}</Text>
+            <Text className={styles.actionText}>{photo.commentsCount}</Text>
           </View>
           <View className={styles.actionBtn} onClick={handleFavorite}>
             <Text className={classnames(styles.actionIcon, photo.isFavorite && styles.favorited)}>⭐</Text>
@@ -153,19 +139,25 @@ const DetailPage: React.FC = () => {
 
         {showComments && (
           <View className={styles.commentsSection}>
-            <Text className={styles.commentsTitle}>评论 ({comments.length})</Text>
-            {comments.map(comment => (
-              <View key={comment.id} className={styles.commentItem}>
-                <Image src={comment.userAvatar} mode="aspectFill" className={styles.commentAvatar} />
-                <View className={styles.commentContent}>
-                  <View className={styles.commentHeader}>
-                    <Text className={styles.commentName}>{comment.userName}</Text>
-                    <Text className={styles.commentTime}>{comment.createdAt}</Text>
+            <Text className={styles.commentsTitle}>评论 ({photo.commentsCount})</Text>
+            {photo.comments.length > 0 ? (
+              photo.comments.map(comment => (
+                <View key={comment.id} className={styles.commentItem}>
+                  <Image src={comment.userAvatar} mode="aspectFill" className={styles.commentAvatar} />
+                  <View className={styles.commentContent}>
+                    <View className={styles.commentHeader}>
+                      <Text className={styles.commentName}>{comment.userName}</Text>
+                      <Text className={styles.commentTime}>{comment.createdAt}</Text>
+                    </View>
+                    <Text className={styles.commentText}>{comment.content}</Text>
                   </View>
-                  <Text className={styles.commentText}>{comment.content}</Text>
                 </View>
+              ))
+            ) : (
+              <View className={styles.emptyComments}>
+                <Text>暂无评论，来发表第一条吧~</Text>
               </View>
-            ))}
+            )}
             <View className={styles.commentInputSection}>
               <Input
                 className={styles.commentInput}
