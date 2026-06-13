@@ -1,6 +1,8 @@
 export interface Photo {
   id: string;
   imageUrl: string;
+  filter?: FilterType;
+  cropArea?: CropArea;
   petId: string;
   petName: string;
   petAvatar: string;
@@ -15,11 +17,21 @@ export interface Photo {
   visibility: VisibilityType;
   albumId?: string;
   description?: string;
+  createdAt: string;
 }
 
 export type MoodType = 'happy' | 'sleepy' | 'playful' | 'curious' | 'hungry' | 'cute';
 
 export type VisibilityType = 'public' | 'family' | 'private';
+
+export type FilterType = 'original' | 'warm' | 'cool' | 'vintage' | 'bright';
+
+export interface CropArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export interface PhotoFilter {
   petId?: string;
@@ -47,4 +59,12 @@ export const moodColors: Record<MoodType, string> = {
   curious: '#FDCB6E',
   hungry: '#E17055',
   cute: '#A29BFE'
+};
+
+export const filterLabels: Record<FilterType, string> = {
+  original: '原图',
+  warm: '暖色',
+  cool: '冷色',
+  vintage: '复古',
+  bright: '明亮'
 };

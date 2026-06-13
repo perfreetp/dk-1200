@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import classnames from 'classnames';
-import { Pet, MoodType, moodLabels } from '@/types/photo';
+import { Pet } from '@/types/pet';
+import { MoodType, moodLabels } from '@/types/photo';
 import styles from './index.module.scss';
 
 interface FilterBarProps {

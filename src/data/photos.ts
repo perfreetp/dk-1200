@@ -19,7 +19,8 @@ export const mockPhotos: Photo[] = [
     isFavorite: false,
     comments: 23,
     visibility: 'public',
-    description: '今天小橘特别开心，一直在客厅跑来跑去'
+    description: '今天小橘特别开心，一直在客厅跑来跑去',
+    createdAt: '2024-01-15T10:30:00Z'
   },
   {
     id: '2',
@@ -35,7 +36,8 @@ export const mockPhotos: Photo[] = [
     isFavorite: true,
     comments: 45,
     visibility: 'family',
-    description: '豆豆睡得好香'
+    description: '豆豆睡得好香',
+    createdAt: '2024-01-14T08:00:00Z'
   },
   {
     id: '3',
@@ -52,7 +54,8 @@ export const mockPhotos: Photo[] = [
     isFavorite: false,
     comments: 12,
     visibility: 'public',
-    albumId: 'a1'
+    albumId: 'a1',
+    createdAt: '2024-01-13T14:00:00Z'
   },
   {
     id: '4',
@@ -67,7 +70,8 @@ export const mockPhotos: Photo[] = [
     isLiked: false,
     isFavorite: false,
     comments: 8,
-    visibility: 'public'
+    visibility: 'public',
+    createdAt: '2024-01-12T16:30:00Z'
   },
   {
     id: '5',
@@ -84,7 +88,8 @@ export const mockPhotos: Photo[] = [
     comments: 56,
     visibility: 'public',
     albumId: 'a2',
-    description: '豆豆生日快乐！'
+    description: '豆豆生日快乐！',
+    createdAt: '2024-01-11T12:00:00Z'
   },
   {
     id: '6',
@@ -101,7 +106,8 @@ export const mockPhotos: Photo[] = [
     isFavorite: true,
     comments: 7,
     visibility: 'family',
-    albumId: 'a3'
+    albumId: 'a3',
+    createdAt: '2024-01-10T20:00:00Z'
   },
   {
     id: '7',
@@ -116,7 +122,8 @@ export const mockPhotos: Photo[] = [
     isLiked: false,
     isFavorite: false,
     comments: 34,
-    visibility: 'public'
+    visibility: 'public',
+    createdAt: '2024-01-09T09:00:00Z'
   },
   {
     id: '8',
@@ -132,7 +139,8 @@ export const mockPhotos: Photo[] = [
     isLiked: true,
     isFavorite: false,
     comments: 15,
-    visibility: 'public'
+    visibility: 'public',
+    createdAt: '2024-01-08T15:00:00Z'
   },
   {
     id: '9',
@@ -147,7 +155,8 @@ export const mockPhotos: Photo[] = [
     isLiked: false,
     isFavorite: false,
     comments: 28,
-    visibility: 'public'
+    visibility: 'public',
+    createdAt: '2024-01-07T11:00:00Z'
   },
   {
     id: '10',
@@ -164,7 +173,8 @@ export const mockPhotos: Photo[] = [
     isFavorite: true,
     comments: 42,
     visibility: 'public',
-    albumId: 'a1'
+    albumId: 'a1',
+    createdAt: '2024-01-06T08:30:00Z'
   },
   {
     id: '11',
@@ -179,7 +189,8 @@ export const mockPhotos: Photo[] = [
     isLiked: false,
     isFavorite: false,
     comments: 11,
-    visibility: 'family'
+    visibility: 'family',
+    createdAt: '2024-01-05T19:00:00Z'
   },
   {
     id: '12',
@@ -194,7 +205,8 @@ export const mockPhotos: Photo[] = [
     isLiked: true,
     isFavorite: false,
     comments: 35,
-    visibility: 'public'
+    visibility: 'public',
+    createdAt: '2024-01-04T12:30:00Z'
   }
 ];
 

@@ -26,11 +26,11 @@
 }
 
 .photoItem {
+  position: relative;
   width: calc((100% - 32rpx) / 3);
   height: 200rpx;
   border-radius: $radius-md;
   overflow: hidden;
-  position: relative;
 }
 
 .photoImage {
@@ -38,19 +38,56 @@
   height: 100%;
 }
 
-.photoRemove {
+.photoActions {
   position: absolute;
   top: 8rpx;
   right: 8rpx;
-  width: 40rpx;
-  height: 40rpx;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: $radius-round;
-  @include flex-center;
+  display: flex;
+  gap: 8rpx;
 }
 
-.removeIcon {
+.actionBtn {
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-round;
+  @include flex-center;
+  
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.actionIcon {
   font-size: 24rpx;
+  color: $color-text-white;
+}
+
+.filterBadge {
+  position: absolute;
+  bottom: 8rpx;
+  left: 8rpx;
+  background: rgba($color-primary, 0.9);
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.filterBadgeText {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+}
+
+.cropBadge {
+  position: absolute;
+  bottom: 8rpx;
+  right: 8rpx;
+  background: rgba($color-success, 0.9);
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.cropBadgeText {
+  font-size: $font-size-xs;
   color: $color-text-white;
 }
 
@@ -75,13 +112,19 @@
   margin-top: $spacing-xs;
 }
 
+.filterScroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
 .filterList {
   display: flex;
   gap: $spacing-md;
+  padding-bottom: $spacing-sm;
 }
 
-.filterItem {
-  display: flex;
+.filterGroup {
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
 }
@@ -91,18 +134,35 @@
   height: 120rpx;
   border-radius: $radius-md;
   overflow: hidden;
-  border: 4rpx solid transparent;
-  transition: all $transition-base;
+  margin-bottom: $spacing-xs;
+}
+
+.filterOptions {
+  display: flex;
+  gap: 8rpx;
+}
+
+.filterOption {
+  padding: 4rpx 12rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-xs;
+  
+  &:active {
+    opacity: 0.9;
+  }
 }
 
 .filterActive {
-  border-color: $color-primary;
+  background: $color-primary;
+  
+  .filterOptionText {
+    color: $color-text-white;
+  }
 }
 
-.filterName {
+.filterOptionText {
   font-size: $font-size-xs;
   color: $color-text-secondary;
-  margin-top: $spacing-xs;
 }
 
 .formItem {
@@ -274,5 +334,81 @@
   &:active {
     opacity: 0.9;
     transform: scale(0.98);
+  }
+}
+
+.cropModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  @include flex-center;
+  z-index: 1000;
+}
+
+.cropContent {
+  width: 90%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+}
+
+.cropTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.cropImageContainer {
+  position: relative;
+  width: 100%;
+  height: 400rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  overflow: hidden;
+  margin-bottom: $spacing-lg;
+}
+
+.cropImage {
+  width: 100%;
+  height: 100%;
+}
+
+.cropFrame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280rpx;
+  height: 280rpx;
+  border: 4rpx dashed $color-primary;
+  border-radius: $radius-md;
+}
+
+.cropActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.cropBtn {
+  flex: 1;
+  height: $button-height-md;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  @include flex-center;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  
+  &:active {
+    opacity: 0.9;
+  }
+  
+  &:last-child {
+    background: $color-primary;
+    color: $color-text-white;
   }
 }

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Input, Button } from '@tarojs/components';
+import { View, Text, Image, Input, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useAppStore } from '@/store/useAppStore';
-import { MoodType, moodLabels, moodColors, VisibilityType } from '@/types/photo';
+import { MoodType, VisibilityType, FilterType, moodLabels, moodColors } from '@/types/photo';
 import styles from './index.module.scss';
 
-const filters = [
+const filters: { id: FilterType; name: string }[] = [
   { id: 'original', name: '原图' },
   { id: 'warm', name: '暖色' },
   { id: 'cool', name: '冷色' },
@@ -16,19 +16,25 @@ const filters = [
 
 const defaultTags = ['日常', '萌照', '睡姿', '吃饭', '玩耍', '出游', '生日', '洗澡'];
 
+interface PhotoEditState {
+  filter: FilterType;
+  cropped: boolean;
+}
+
 const UploadPage: React.FC = () => {
   const { pets, addPhoto } = useAppStore();
 
-  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([
-    'https://picsum.photos/id/237/400/400'
-  ]);
-  const [selectedFilter, setSelectedFilter] = useState('original');
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>(['https://picsum.photos/id/237/400/400']);
+  const [photoEdits, setPhotoEdits] = useState<Record<string, PhotoEditState>>({});
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [location, setLocation] = useState('');
   const [visibility, setVisibility] = useState<VisibilityType>('public');
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [currentCropIndex, setCurrentCropIndex] = useState(0);
+  const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 300, height: 300 });
 
   const moods: MoodType[] = ['happy', 'sleepy', 'playful', 'curious', 'hungry', 'cute'];
 
@@ -38,7 +44,13 @@ const UploadPage: React.FC = () => {
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
-        setSelectedPhotos([...selectedPhotos, ...res.tempFilePaths]);
+        const newPhotos = res.tempFilePaths;
+        setSelectedPhotos([...selectedPhotos, ...newPhotos]);
+        const newEdits: Record<string, PhotoEditState> = {};
+        newPhotos.forEach(photo => {
+          newEdits[photo] = { filter: 'original', cropped: false };
+        });
+        setPhotoEdits(prev => ({ ...prev, ...newEdits }));
       },
       fail: (err) => {
         console.error('[Upload] 选择图片失败:', err);
@@ -47,7 +59,34 @@ const UploadPage: React.FC = () => {
   };
 
   const handleRemovePhoto = (index: number) => {
+    const photoUrl = selectedPhotos[index];
     setSelectedPhotos(selectedPhotos.filter((_, i) => i !== index));
+    const newEdits = { ...photoEdits };
+    delete newEdits[photoUrl];
+    setPhotoEdits(newEdits);
+  };
+
+  const handleFilterChange = (index: number, filter: FilterType) => {
+    const photoUrl = selectedPhotos[index];
+    setPhotoEdits(prev => ({
+      ...prev,
+      [photoUrl]: { ...(prev[photoUrl] || { filter: 'original', cropped: false }), filter }
+    }));
+  };
+
+  const handleCropStart = (index: number) => {
+    setCurrentCropIndex(index);
+    setShowCropModal(true);
+  };
+
+  const handleCropConfirm = () => {
+    const photoUrl = selectedPhotos[currentCropIndex];
+    setPhotoEdits(prev => ({
+      ...prev,
+      [photoUrl]: { ...(prev[photoUrl] || { filter: 'original', cropped: false }), cropped: true }
+    }));
+    setShowCropModal(false);
+    Taro.showToast({ title: '裁剪完成', icon: 'success' });
   };
 
   const handleTagSelect = (tag: string) => {
@@ -60,26 +99,22 @@ const UploadPage: React.FC = () => {
 
   const handleUpload = () => {
     if (selectedPhotos.length === 0) {
-      Taro.showToast({
-        title: '请先选择照片',
-        icon: 'none'
-      });
+      Taro.showToast({ title: '请先选择照片', icon: 'none' });
       return;
     }
     if (!selectedPetId) {
-      Taro.showToast({
-        title: '请选择宠物',
-        icon: 'none'
-      });
+      Taro.showToast({ title: '请选择宠物', icon: 'none' });
       return;
     }
 
     const pet = pets.find(p => p.id === selectedPetId);
     
     selectedPhotos.forEach((photoUrl, index) => {
+      const edit = photoEdits[photoUrl] || { filter: 'original', cropped: false };
       const newPhoto = {
         id: `new_${Date.now()}_${index}`,
         imageUrl: photoUrl,
+        filter: edit.filter,
         petId: selectedPetId,
         petName: pet?.name || '',
         petAvatar: pet?.avatar || '',
@@ -91,20 +126,16 @@ const UploadPage: React.FC = () => {
         isLiked: false,
         isFavorite: false,
         comments: 0,
-        visibility
+        visibility,
+        createdAt: new Date().toISOString()
       };
       addPhoto(newPhoto);
     });
 
-    Taro.showToast({
-      title: '上传成功',
-      icon: 'success'
-    });
+    Taro.showToast({ title: '上传成功', icon: 'success' });
 
     setTimeout(() => {
-      Taro.switchTab({
-        url: '/pages/home/index'
-      });
+      Taro.switchTab({ url: '/pages/home/index' });
     }, 1500);
   };
 
@@ -113,14 +144,32 @@ const UploadPage: React.FC = () => {
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>选择照片</Text>
         <View className={styles.photoGrid}>
-          {selectedPhotos.map((photo, index) => (
-            <View key={index} className={styles.photoItem}>
-              <Image src={photo} mode="aspectFill" className={styles.photoImage} />
-              <View className={styles.photoRemove} onClick={() => handleRemovePhoto(index)}>
-                <Text className={styles.removeIcon}>×</Text>
+          {selectedPhotos.map((photo, index) => {
+            const edit = photoEdits[photo] || { filter: 'original', cropped: false };
+            return (
+              <View key={index} className={styles.photoItem}>
+                <Image src={photo} mode="aspectFill" className={styles.photoImage} />
+                <View className={styles.photoActions}>
+                  <View className={styles.actionBtn} onClick={() => handleCropStart(index)}>
+                    <Text className={styles.actionIcon}>✂️</Text>
+                  </View>
+                  <View className={styles.actionBtn} onClick={() => handleRemovePhoto(index)}>
+                    <Text className={styles.actionIcon}>×</Text>
+                  </View>
+                </View>
+                {edit.filter !== 'original' && (
+                  <View className={styles.filterBadge}>
+                    <Text className={styles.filterBadgeText}>{filters.find(f => f.id === edit.filter)?.name}</Text>
+                  </View>
+                )}
+                {edit.cropped && (
+                  <View className={styles.cropBadge}>
+                    <Text className={styles.cropBadgeText}>已裁剪</Text>
+                  </View>
+                )}
               </View>
-            </View>
-          ))}
+            );
+          })}
           {selectedPhotos.length < 9 && (
             <View className={styles.addPhoto} onClick={handleAddPhoto}>
               <Text className={styles.addIcon}>+</Text>
@@ -130,25 +179,34 @@ const UploadPage: React.FC = () => {
         </View>
       </View>
 
-      <View className={styles.section}>
-        <Text className={styles.sectionTitle}>滤镜效果</Text>
-        <View className={styles.filterList}>
-          {filters.map(filter => (
-            <View
-              key={filter.id}
-              className={styles.filterItem}
-              onClick={() => setSelectedFilter(filter.id)}
-            >
-              <Image
-                src={selectedPhotos[0] || 'https://picsum.photos/id/237/120/120'}
-                mode="aspectFill"
-                className={classnames(styles.filterPreview, selectedFilter === filter.id && styles.filterActive)}
-              />
-              <Text className={styles.filterName}>{filter.name}</Text>
+      {selectedPhotos.length > 0 && (
+        <View className={styles.section}>
+          <Text className={styles.sectionTitle}>滤镜效果</Text>
+          <ScrollView scrollX className={styles.filterScroll}>
+            <View className={styles.filterList}>
+              {selectedPhotos.map((photo, photoIndex) => (
+                <View key={photoIndex} className={styles.filterGroup}>
+                  <Image src={photo} mode="aspectFill" className={styles.filterPreview} />
+                  <View className={styles.filterOptions}>
+                    {filters.map(filter => {
+                      const edit = photoEdits[photo] || { filter: 'original', cropped: false };
+                      return (
+                        <View
+                          key={filter.id}
+                          className={classnames(styles.filterOption, edit.filter === filter.id && styles.filterActive)}
+                          onClick={() => handleFilterChange(photoIndex, filter.id)}
+                        >
+                          <Text className={styles.filterOptionText}>{filter.name}</Text>
+                        </View>
+                      );
+                    })}
+                  </View>
+                </View>
+              ))}
             </View>
-          ))}
+          </ScrollView>
         </View>
-      </View>
+      )}
 
       <View className={styles.section}>
         <Text className={styles.sectionTitle}>标记信息</Text>
@@ -252,9 +310,25 @@ const UploadPage: React.FC = () => {
 
       <View className={styles.bottomBar}>
         <Button className={styles.uploadButton} onClick={handleUpload}>
-          上传照片
+          上传照片 ({selectedPhotos.length})
         </Button>
       </View>
+
+      {showCropModal && (
+        <View className={styles.cropModal} onClick={() => setShowCropModal(false)}>
+          <View className={styles.cropContent} onClick={(e) => e.stopPropagation()}>
+            <Text className={styles.cropTitle}>裁剪照片</Text>
+            <View className={styles.cropImageContainer}>
+              <Image src={selectedPhotos[currentCropIndex]} mode="aspectFit" className={styles.cropImage} />
+              <View className={styles.cropFrame}></View>
+            </View>
+            <View className={styles.cropActions}>
+              <Button className={styles.cropBtn} onClick={() => setShowCropModal(false)}>取消</Button>
+              <Button className={styles.cropBtn} onClick={handleCropConfirm}>确定裁剪</Button>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };

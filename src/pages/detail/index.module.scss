@@ -3,23 +3,254 @@
 .detailPage {
   min-height: 100vh;
   background: $color-bg-page;
-  @include flex-center;
-  flex-direction: column;
 }
 
-.placeholderIcon {
-  font-size: 80rpx;
+.scrollView {
+  height: 100vh;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  background: $color-bg-card;
+}
+
+.photoImage {
+  width: 100%;
+  max-height: 600rpx;
+}
+
+.filterTag {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: rgba($color-primary, 0.9);
+  padding: 8rpx 20rpx;
+  border-radius: $radius-round;
+  
+  Text {
+    font-size: $font-size-xs;
+    color: $color-text-white;
+  }
+}
+
+.infoSection {
+  background: $color-bg-card;
+  padding: $spacing-lg $page-padding;
   margin-bottom: $spacing-md;
 }
 
-.placeholderTitle {
+.petInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.petAvatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-md;
+}
+
+.petDetail {
+  flex: 1;
+}
+
+.petName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.moodTag {
+  display: flex;
+  align-items: center;
+}
+
+.moodDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-xs;
+}
+
+.moodText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.date {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.location {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.description {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  margin-bottom: $spacing-md;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-md;
+}
+
+.tag {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  padding: 8rpx 20rpx;
+  border-radius: $radius-round;
+}
+
+.visibilityBadge {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.actionsSection {
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: $spacing-md;
+}
+
+.actionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-sm;
+  
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.actionIcon {
+  font-size: 48rpx;
+  margin-bottom: $spacing-xs;
+}
+
+.liked {
+  color: $color-like;
+}
+
+.favorited {
+  color: $color-favorite;
+}
+
+.actionText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.commentsSection {
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: 120rpx;
+}
+
+.commentsTitle {
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
-  margin-bottom: $spacing-sm;
+  margin-bottom: $spacing-md;
 }
 
-.placeholderText {
+.commentItem {
+  display: flex;
+  margin-bottom: $spacing-md;
+}
+
+.commentAvatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-sm;
+}
+
+.commentContent {
+  flex: 1;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+}
+
+.commentName {
   font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.commentTime {
+  font-size: $font-size-xs;
   color: $color-text-tertiary;
+}
+
+.commentText {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.commentInputSection {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  padding: $spacing-sm $page-padding;
+  padding-bottom: calc($spacing-sm + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  box-shadow: $shadow-float;
+}
+
+.commentInput {
+  flex: 1;
+  height: 72rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  padding: 0 $spacing-md;
+  font-size: $font-size-md;
+}
+
+.sendBtn {
+  width: 120rpx;
+  height: 72rpx;
+  background: $color-primary;
+  border-radius: $radius-button;
+  margin-left: $spacing-sm;
+  font-size: $font-size-md;
+  color: $color-text-white;
+  @include flex-center;
+  
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.loading {
+  @include flex-center;
+  height: 100vh;
 }
